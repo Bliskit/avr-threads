@@ -15,7 +15,6 @@ THREAD t1(void) {
 	}
 }
 
-volatile bool workerDone = false;
 THREAD worker(void) {
 	int i = 0;
 	while (1) {
@@ -23,7 +22,6 @@ THREAD worker(void) {
 		i++;
 		if (i >= 5) {
 			Serial.println("Worker done!");
-			workerDone = true;
 			return;
 		}
 		tdelay(500);
@@ -52,11 +50,5 @@ void loop() {
 		String echo = Serial.readString();
 		Serial.println("Echo: " + echo);
 	}
-	if (workerDone) {
-		Threads::destroyThread(workerPID);
-		Serial.println("Destroyed worker thread!");
-		workerDone = false;
-	}
-	Serial.println("Loop!");
-	tdelay(500);
+	Threads::yield();
 }

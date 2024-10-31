@@ -8,8 +8,8 @@ namespace Threads {
 	Thread *currentThread;
 	
 	// Primary management functions
-	void init(uint16_t stackSize) {
-		settings.stackSize = stackSize;
+	void init(uint16_t defaultStackSize) {
+		settings.defaultStackSize = defaultStackSize;
 		currentThread = new Thread;
 		currentThread->pid = 0;
 		currentThread->stackptr = SP;
@@ -17,9 +17,11 @@ namespace Threads {
 		currentThread->next = currentThread;
 	}
 	
-	PID createThread(void (*func)(void)) {
+	PID createThread(void (*func)(void), uint16_t stackSize = -1) {
 		// Allocate required resources
-		uint8_t *newStack = new uint8_t[settings.stackSize];
+    if (stackSize == -1)
+      stackSize = settings.defaultStackSize;
+		uint8_t *newStack = new uint8_t[stackSize];
 		Thread *newThread = new Thread;
 		
 		// Prepare thread
@@ -27,7 +29,7 @@ namespace Threads {
 		newThread->stackbase = newStack;
 		
 		// Get adjusted stack pointer and write entry address
-		uint8_t* stackptr = initStack(newStack,func);
+		uint8_t* stackptr = initStack(newStack, stackSize,func);
 		newThread->stackptr = (uint16_t) stackptr;
 		
 		// Insert the new thread into the queue
@@ -100,9 +102,9 @@ namespace Threads {
 		return thread;
 	}		
 	
-	uint8_t *initStack(uint8_t* stackbase, void (*entry)(void)) {
+	uint8_t *initStack(uint8_t* stackbase, uint16_t stackSize, void (*entry)(void)) {
 		// We need to jump to the top of the stack and need a pointer
-		uint8_t *ptr = (uint8_t*) (stackbase + settings.stackSize - 1);
+		uint8_t *ptr = (uint8_t*) (stackbase + stackSize - 1);
 		
 		
 #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)

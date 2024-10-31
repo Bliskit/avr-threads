@@ -13,7 +13,16 @@ void tdelay(uint32_t timeout)
 THREAD t1(void) {
 	while (1) {
 		Serial.println("T1 Loop");
-		tdelay(1000);
+		tdelay(2500);
+	}
+}
+
+THREAD t2(void) {
+	while (1) {
+		digitalWrite(LED_BUILTIN, HIGH);  // turn the LED on (HIGH is the voltage level)
+    		tdelay(250);                      // wait
+    		digitalWrite(LED_BUILTIN, LOW);   // turn the LED off by making the voltage LOW
+    		tdelay(250);                      // wait
 	}
 }
 
@@ -30,13 +39,14 @@ THREAD worker(void) {
 	}
 }
 
-Threads::PID workerPID;
-
 void setup() {
+  	pinMode(LED_BUILTIN, OUTPUT);
+	
 	Serial.begin(9600);
 	Threads::init(128);
 	Threads::createThread(t1);
-	workerPID = Threads::createThread(worker);
+	Threads::createThread(t2);
+	Threads::createThread(worker);
 	
 	Threads::Thread *thread = Threads::currentThread;
 	Serial.println("[" + String(thread->pid) + "]:0x" + String((uint16_t) thread,HEX));

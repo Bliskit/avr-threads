@@ -12,12 +12,14 @@ As with `Serial.readString()`, `Serial.println()` also behaves differently out o
 ### 2. Delays
 The standard `delay` function of the Arduino library blocks the CPU until the timeout is reached. A way of having delays in threads could look like this:
 ```
-void threadedDelay(uint32_t timeout) {
-    uint32_t now = millis();
-    uint32_t then = now + timeout;
-    while (millis() < then) {
+void tdelay(uint32_t timeout)
+{
+    uint32_t mark = millis();
+    uint32_t interval;
+    do {
         Threads::yield();
-    }
+        interval = millis() - mark;    // prevent overflow faults
+    } while(interval < timeout);
 }
 ```
 This function will keep switching to the next thread, until the timeout is reached.

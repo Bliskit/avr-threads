@@ -7,10 +7,10 @@
 - Destroy threads after use
 
 # Easy to use
-To get ready for using threads, simply call `Threads::init(stackSize);`  
-To create a new thread, call `Threads::createThread(newThread);`  
+To get ready for using threads, simply call `Threads::init(defaultStackSize);`  
+To create a new thread, call `Threads::createThread(newThread, stackSize = -1);`  
 To switch to the next thread, call `Threads::yield();`  
-To destroy another thread, call `Threads::destroyThread(pid);`
+To destroy another thread, call `Threads::destroyThread(pid);`  
 To destroy current thread, return the function.
 
 A simple program might look like this:

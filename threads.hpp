@@ -9,6 +9,7 @@ namespace Threads {
 	typedef struct Thread Thread;
 	struct Thread {
 		PID pid;
+    		volatile uint8_t workerDone = 0;
 		uint16_t stackptr;
 		uint8_t *stackbase;
 		Thread *next;

@@ -9,14 +9,14 @@ namespace Threads {
 	typedef struct Thread Thread;
 	struct Thread {
 		PID pid;
-    		volatile uint8_t workerDone = 0;
+    volatile uint8_t workerDone = 0;
 		uint16_t stackptr;
 		uint8_t *stackbase;
 		Thread *next;
 	};
 
 	extern struct Settings {
-		uint16_t stackSize;
+		uint16_t defaultStackSize;
 	} settings;
 
 	// Book keeping values
@@ -28,13 +28,13 @@ namespace Threads {
 	// Secondary management functions
 	PID getNextPID();
 	Thread *getLastThread();
-	uint8_t *initStack(uint8_t* stackbase, void (*entry)(void));
+	uint8_t *initStack(uint8_t* stackbase, uint16_t stackSize, void (*entry)(void));
 	__attribute((noinline)) void exit(void);
 	Thread *getThreadByPID(PID pid);
 	
 	// Primary management functions
 	__attribute((noinline)) void init(uint16_t stackSize);
-	__attribute((noinline)) PID createThread(void (*func)(void));
+	__attribute((noinline)) PID createThread(void (*func)(void), uint16_t stackSize = -1);
 	__attribute((noinline)) void destroyThread(PID pid);
 	__attribute((noinline)) void yield();
 }

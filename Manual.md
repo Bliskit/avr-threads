@@ -1,6 +1,6 @@
 # Manual
 ### 1. Setup
-To use Threads, you have to include `threads.hpp"` in your source file and have `stack_magic.hpp` in the same directory. Before calling `Threads::yield` the first time, you have to call `Threads::init(stackSize)` with `stackSize` being the maximum number of bytes each thread should get for its stack. Upon yielding, a thread stores all registers (r0 - r31) including the SREG on the stack. Also, upon creating a thread, the function address of the thread and the final exit loop are stored on the stack, so you will have to assign a stack size of at least: 32 + 1 + 4 on CPUs with 16 bit program counter (ATmega328); or 32 + 1 + 6 on CPUs with 24 bit program counter(ATmega2560/2561).
+To use Threads, you have to include `threads.hpp"` in your source file and have `stack_magic.hpp` in the same directory. Before calling `Threads::yield` the first time, you have to call `Threads::init(defaultStackSize)` with `defaultStackSize` being the maximum number of bytes each thread should get for its stack, this can be overridden for each thread when creating a thread `Threads::createThread(func, stackSize = -1)`. Upon yielding, a thread stores all registers (r0 - r31) including the SREG on the stack. Also, upon creating a thread, the function address of the thread and the final exit loop are stored on the stack, so you will have to assign a stack size of at least: 32 + 1 + 4 on CPUs with 16 bit program counter (ATmega328); or 32 + 1 + 6 on CPUs with 24 bit program counter(ATmega2560/2561).
 Calling `Threads::yield` without calling `Threads::init` first might cause some unexpected behavior and lead to crashes.
 
 Your `main` should look something like this:
@@ -17,7 +17,7 @@ int main(void) {
 }
 ```
 ### 2. Creating threads
-To create executable threads, you have to call `Threads::createThread(func)`. This function will allocate all necessary memory and return a PID, which can be used to destroy the thread later. The function provided should look like this:
+To create executable threads, you have to call `Threads::createThread(func, stackSize = -1)`. This function will allocate all necessary memory and return a PID, which can be used to destroy the thread later. If needed the default size of the stack can be overridden by setting the parameter `stackSize`, if not provided, or set to -1, the size of the stack will use the default value that was set during `Threads::init(defaultStackSize)`  The function provided should look like this:
 ```
 THREAD myThread(void) {
     while (gotWork()) {

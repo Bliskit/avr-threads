@@ -58,7 +58,11 @@ namespace Threads {
 		delete selected;		
 	}
 	
-	void yield() {
+	void yield() {    
+		//delete all next threads if they are signaled done
+    		while(currentThread->next->workerDone == 1) 
+      			destroyThread(currentThread->next->pid);
+    
 		SM_SAVE_CONTEXT()
 
 		// Save stack of current thread
@@ -146,7 +150,8 @@ namespace Threads {
 		
 	void exit(void) {
 		while (1) {
-			Threads::yield();
+			currentThread->workerDone = 1;
+			yield();
 		}
 	}	
 

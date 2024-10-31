@@ -24,16 +24,14 @@ THREAD myThread(void) {
         // Do some work
         Threads::yield();
     }
-    // Send signal that this thread has finished
 }
 ```
-The macro `THREAD` expands to `__attribute((used)) void` to ensure that the function does not get optimized out and does not return anything. The function cannot take any arguments and should tell a manager thread that it has finished its task.  
-The function may return, but it will end up in an infinite loop, until it gets destroyed from within another thread.
+The macro `THREAD` expands to `__attribute((used)) void` to ensure that the function does not get optimized out and does not return anything. The function cannot take any arguments.  
 ### 3. Switching between threads
 To switch from one thread to another, call `Threads::yield`. This will automatically save all registers, including the SREG and switch out the stack pointer. Currently, all threads are dynamically allocated and contain a pointer to the next thread in the queue. Upon switching threads, the next thread in the queue will get execution time. The last thread in the queue points back at the first thread. Remember, Threads is a *cooperative* multithreading library, so you should try to call `Threads::yield` often and not hog the CPU.
 
 ### 4. Destroying threads
-To destroy another thread, call `Threads::destroyThread(pid)`. This will free allocated memory and exclude the thread from the queue. ***Important: You cannot destroy a thread from within, you will have to use another thread. Calling `Threads::destroyThread` with the current PID will not do anything.***
+When the function ends/returns, it will automatically signal for destruction and will be destroyed on the next `Threads::yield` call by another thread. This will free allocated memory and exclude the thread from the queue.
 
 ### 5. Communicating between threads
 Due to the way registers are saved and restored upon calling `Threads::yield`, variables stored in a register will not be consistent between threads. To share a value between threads, declare it as `volatile` and maybe use an IO register (perhaps `GPIOR0` on the ATmega328p) as a mutex.

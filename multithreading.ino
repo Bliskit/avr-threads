@@ -1,11 +1,13 @@
 #include "threads.hpp"
 
-void tdelay(uint32_t timeout) {
-	uint32_t now = millis();
-	uint32_t then = now + timeout;
-	while (millis() < then) {
-		Threads::yield();
-	}
+void tdelay(uint32_t timeout)
+{
+    uint32_t mark = millis();
+    uint32_t interval;
+    do {
+        Threads::yield();
+        interval = millis() - mark;    // prevent overflow faults
+    } while(interval < timeout);
 }
 
 THREAD t1(void) {

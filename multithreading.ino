@@ -59,7 +59,7 @@ void setup() {
 int count = 0;
 void loop() {
 	if (Serial.available()) {
-		String echo = Serial.readString();
+		String echo = Serial.readStringUntil('\n'); //read string from arduino serial monitor, make sure line ending is set to 'New Line'
 		Serial.println("Echo: " + echo);
 	}
 	Threads::yield();

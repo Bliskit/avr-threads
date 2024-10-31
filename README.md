@@ -10,7 +10,8 @@
 To get ready for using threads, simply call `Threads::init(stackSize);`  
 To create a new thread, call `Threads::createThread(newThread);`  
 To switch to the next thread, call `Threads::yield();`  
-To destroy another thread, call `Threads::destroyThread(pid);`  
+To destroy another thread, call `Threads::destroyThread(pid);`
+To destroy current thread, return the function.
 
 A simple program might look like this:
 ```
@@ -40,9 +41,9 @@ int main(void) {
     }
 }
 ```
-A short manual can be found in ["Manual.md"](https://github.com/greygraphics/avr-threads/blob/master/Manual.md).
+A short manual can be found in ["Manual.md"](https://github.com/Bliskit/avr-threads/blob/master/Manual.md).
 
 # Arduino-compatible
 Threads does not use any timers or other peripherals, so using it with the Arduino IDE is as simple as including the header. 
 An example is provided in `multithreading.ino`  
-Some tipps and tricks for using Threads with the Arduino library can be found in ["Arduino.md"](https://github.com/greygraphics/avr-threads/blob/master/Arduino.md).
+Some tipps and tricks for using Threads with the Arduino library can be found in ["Arduino.md"](https://github.com/Bliskit/avr-threads/blob/master/Arduino.md).

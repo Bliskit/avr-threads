@@ -100,6 +100,23 @@ namespace Threads {
 		// We need to jump to the top of the stack and need a pointer
 		uint8_t *ptr = (uint8_t*) (stackbase + settings.stackSize - 1);
 		
+		
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega2561__)
+		//The ATmega2560/2561 have more than 128kb of flash storage, so the program counter needs three bytes instead of two for smaller AVR devices
+		// Write exit return address
+		__uint24 exitAddress = (__uint24) Threads::exit;
+		ptr[0] = (uint8_t) exitAddress;
+		ptr[-1] = (uint8_t) (exitAddress >> 8);
+		ptr[-2] = (uint8_t) (exitAddress >> 16);
+		ptr -= 3;
+		
+		// Write entry address
+		__uint24 entryAddress = (__uint24) entry;
+		ptr[0] = (uint8_t) entryAddress;
+		ptr[-1] = (uint8_t) (entryAddress >> 8);
+		ptr[-2] = (uint8_t) (entryAddress >> 16);
+		ptr -= 3;
+#else
 		// Write exit return address
 		uint16_t exitAddress = (uint16_t) Threads::exit;
 		ptr[0] = (uint8_t) exitAddress;
@@ -111,6 +128,7 @@ namespace Threads {
 		ptr[0] = (uint8_t) entryAddress;
 		ptr[-1] = (uint8_t) (entryAddress >> 8);
 		ptr -= 2;
+#endif
 		
 		// Simulate 32 pushed registers
 		for (int i = 0; i < 32; i++) {

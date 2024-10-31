@@ -17,7 +17,8 @@ int main(void) {
 }
 ```
 ### 2. Creating threads
-To create executable threads, you have to call `Threads::createThread(func, stackSize = -1)`. This function will allocate all necessary memory and return a PID, which can be used to destroy the thread later. If needed, the default size of the stack can be overridden by setting the parameter `stackSize`, if not provided, or set to -1, the size of the stack will use the default value that was set during `Threads::init(defaultStackSize)`  The function provided should look like this:
+To create executable threads, you have to call `Threads::createThread(func, stackSize = -1)`. This function will allocate all necessary memory and return a PID, which can be used to destroy the thread later. If needed, the default size of the stack can be overridden by setting the parameter `stackSize`, if not provided, or set to -1, the size of the stack will use the default value that was set during `Threads::init(defaultStackSize)`  
+The function provided should look like this:
 ```
 THREAD myThread(void) {
     while (gotWork()) {
